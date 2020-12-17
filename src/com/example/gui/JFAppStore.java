@@ -5,32 +5,39 @@
  */
 package com.example.gui;
 
+import com.example.dominio.Aplicaciones;
 import com.example.dominio.Usuario;
 import com.example.servicios.GestorAplicaciones;
 import com.example.servicios.GestorUsuario;
 import java.awt.Cursor;
 import static java.awt.Frame.HAND_CURSOR;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import javax.swing.ImageIcon;
-
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Gonzalo
  */
 public class JFAppStore extends javax.swing.JFrame {
+
     private Usuario user;
     private GestorUsuario gestor;
     private GestorAplicaciones gestorApp;
-    private appTableModel model;
-    
+    private List<Aplicaciones> listApp;
+    appTableModel modelo;
+    String filtro;
+
     /**
      * Creates new form AppStore
+     *
      * @param u
      */
     public JFAppStore(Usuario u) {
@@ -38,41 +45,50 @@ public class JFAppStore extends javax.swing.JFrame {
 
         initComponents();
         gestorApp = new GestorAplicaciones();
-        model = new appTableModel(gestorApp,user.getUsuario_id());
-        
+        setExtendedState(this.MAXIMIZED_BOTH);
         setTitle("Tienda de Aplicaciones");
         this.setLocationRelativeTo(null);
-        
+
         cargarImagenUsuario(user.getNick_usuario(), user.getImg_usuario());
-        
-        jTAplicaciones.setModel(model);
-        
         jLNickUsuario.setText(user.getNick_usuario());
-        jLNombreApellido.setText(user.getN_usuario() + ", " + user.getA_usuario());
-        jLCorreo.setText(user.getCorreo_usuario());
-        
-        if(user.getIdTipo()==1)
-            jBPublicadas.setVisible(false);
-        
-        
-        
-	jLNickUsuario.addMouseListener(new MouseListener() {
+        jLNickUsuario.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent arg0) {
-		new JDUsuario(JFAppStore.this, true,user).setVisible(true);
+                new JDUsuario(JFAppStore.this, true, user).setVisible(true);
             }
+
             @Override
             public void mouseEntered(MouseEvent arg0) {
                 jLNickUsuario.setCursor(new Cursor(HAND_CURSOR));
             }
+
             @Override
             public void mouseExited(MouseEvent arg0) {
-                jLNickUsuario.setCursor(new Cursor(DEFAULT_CURSOR));}
+                jLNickUsuario.setCursor(new Cursor(DEFAULT_CURSOR));
+            }
+
             @Override
-            public void mousePressed(MouseEvent arg0) {}
+            public void mousePressed(MouseEvent arg0) {
+            }
+
             @Override
-            public void mouseReleased(MouseEvent arg0) {}});
+            public void mouseReleased(MouseEvent arg0) {
+            }
+        });
         
+        jLNombreApellido.setText(user.getN_usuario() + ", " + user.getA_usuario());
+        jLCorreo.setText(user.getCorreo_usuario());
+        
+        listApp = gestorApp.listApps(user.getUsuario_id(), true, true);
+
+        cargarPanelApp(listApp,false);
+
+        if (user.getIdTipo() == 1) { //el tipo uno es consumidor
+            jTVistaApps.setVisible(false);
+        }
+
+        
+
     }
 
     private void cargarImagenUsuario(String user, String imgUser) {
@@ -87,6 +103,29 @@ public class JFAppStore extends javax.swing.JFrame {
         }
     }
     
+    private void cargarPanelApp(List<Aplicaciones> listApp, boolean editar) {
+        
+        if (listApp.isEmpty()){
+            System.out.println("No hay nada en la lista");
+            JOptionPane.showMessageDialog(this, "No hay nada para mostrar, lo siento!", "Lista Vacia", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            jPList.removeAll();
+            jPList.validate();
+            jPList.repaint();
+        }
+        
+        GridLayout miGridLayout = new GridLayout(0,5);
+        jPList.setLayout(miGridLayout);
+        
+        for (int i = 0; i < listApp.size(); i++) {
+            Aplicaciones apps = listApp.get(i);
+                jPList.add(new jPListado(apps, editar, user));
+                
+        }
+        jPList.validate();
+        jPList.repaint();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -96,33 +135,116 @@ public class JFAppStore extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLNickUsuario = new javax.swing.JLabel();
-        jlImagen = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jLCorreo = new javax.swing.JLabel();
-        jLNombreApellido = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTAplicaciones = new javax.swing.JTable();
+        jTextField1 = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jTBuscar = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jBPublicadas = new javax.swing.JButton();
+        jbBuscar = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jTVistaApps = new javax.swing.JToggleButton();
+        jBMisApps = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jPList = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jlImagen = new javax.swing.JLabel();
+        jLNickUsuario = new javax.swing.JLabel();
+        jLNombreApellido = new javax.swing.JLabel();
+        jLCorreo = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jBLogOut = new javax.swing.JButton();
+
+        jTextField1.setText("jTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tienda de Aplicaciones");
         setBackground(new java.awt.Color(0, 0, 102));
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                formFocusGained(evt);
+            }
+        });
 
-        jPanel1.setBackground(new java.awt.Color(102, 102, 102));
-        jPanel1.setForeground(new java.awt.Color(0, 102, 51));
+        jbBuscar.setText("Buscar...");
+        jbBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbBuscarActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Nombre: ");
+
+        jTVistaApps.setText("Mis Publicadas");
+        jTVistaApps.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTVistaAppsStateChanged(evt);
+            }
+        });
+        jTVistaApps.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTVistaAppsActionPerformed(evt);
+            }
+        });
+
+        jBMisApps.setText("Mis Apps");
+        jBMisApps.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBMisAppsActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jbBuscar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTVistaApps)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jBMisApps)
+                .addGap(16, 16, 16))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbBuscar)
+                    .addComponent(jLabel2)
+                    .addComponent(jTVistaApps)
+                    .addComponent(jBMisApps))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPList.setBackground(new java.awt.Color(102, 102, 102));
+
+        javax.swing.GroupLayout jPListLayout = new javax.swing.GroupLayout(jPList);
+        jPList.setLayout(jPListLayout);
+        jPListLayout.setHorizontalGroup(
+            jPListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 964, Short.MAX_VALUE)
+        );
+        jPListLayout.setVerticalGroup(
+            jPListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 345, Short.MAX_VALUE)
+        );
+
+        jScrollPane2.setViewportView(jPList);
+
+        jlImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/example/images/silueta1.jpg"))); // NOI18N
 
         jLNickUsuario.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLNickUsuario.setText("Nombre del Usuario");
 
-        jlImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/example/images/silueta1.jpg"))); // NOI18N
+        jLNombreApellido.setText("Nombre Y Apellido");
+
+        jLCorreo.setText("Correo Electronico");
 
         jButton1.setText("Publicar Aplicacion");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -131,110 +253,49 @@ public class JFAppStore extends javax.swing.JFrame {
             }
         });
 
-        jLCorreo.setText("Correo Electronico");
-
-        jLNombreApellido.setText("Nombre Y Apellido");
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel1.setText("Bienvenido a AppStore");
+        jBLogOut.setText("Log Out");
+        jBLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBLogOutActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addComponent(jlImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jLNickUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLCorreo)
-                    .addComponent(jLNombreApellido))
-                .addContainerGap(300, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(24, 24, 24))
+                .addGap(46, 46, 46)
+                .addComponent(jlImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLNickUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLNombreApellido)
+                    .addComponent(jLCorreo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jBLogOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(26, 26, 26))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jlImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLNickUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jBLogOut)
+                            .addComponent(jLNickUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLNombreApellido)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLCorreo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(jlImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(36, Short.MAX_VALUE))
-        );
-
-        jTAplicaciones.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane1.setViewportView(jTAplicaciones);
-
-        jButton4.setText("Buscar...");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Mis Apps");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jBPublicadas.setText("Publicadas");
-        jBPublicadas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBPublicadasActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
-                .addComponent(jBPublicadas, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton2)
-                    .addComponent(jBPublicadas))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLNombreApellido)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLCorreo))
+                            .addComponent(jButton1))))
+                .addGap(132, 132, 132))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -242,63 +303,100 @@ public class JFAppStore extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 652, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jScrollPane2)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       new JDNvaApp(this, true,user).setVisible(true);      // TODO add your handling code here:
+        new JDNvaApp(this, true, user, null).setVisible(true);      // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        
-        System.out.println("El texto a buscar es: " +jTBuscar.getText());
-        model = new appTableModel(gestorApp,user.getUsuario_id(),jTBuscar.getText());
-        jTAplicaciones.setModel(model);
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void jbBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBuscarActionPerformed
+        listApp = gestorApp.listAppsByparam(user.getUsuario_id(), jTBuscar.getText());
+        cargarPanelApp(listApp, false);
+    }//GEN-LAST:event_jbBuscarActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        new JDMisApps(this, true).setVisible(true);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void jBMisAppsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBMisAppsActionPerformed
+        listApp = gestorApp.listAppsC(user.getUsuario_id());
+        cargarPanelApp(listApp, true);
+    }//GEN-LAST:event_jBMisAppsActionPerformed
 
-    private void jBPublicadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBPublicadasActionPerformed
+    private void jTVistaAppsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTVistaAppsActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jBPublicadasActionPerformed
+    }//GEN-LAST:event_jTVistaAppsActionPerformed
 
-    
+    private void jTVistaAppsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTVistaAppsStateChanged
+        
+        if(jTVistaApps.isSelected()){
+            jTVistaApps.setText("Comprar App");
+            listApp = gestorApp.listApps(user.getUsuario_id(), false, true);
+            cargarPanelApp(listApp, true);
+            
+        }else{
+            jTVistaApps.setText("Mis Publicadas");
+            listApp = gestorApp.listApps(user.getUsuario_id(), true, true);
+            cargarPanelApp(listApp, false);
+            
+        }
+
+   
+    }//GEN-LAST:event_jTVistaAppsStateChanged
+
+    private void jBLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBLogOutActionPerformed
+        this.dispose();
+        new JFlogin().setVisible(true);
+    }//GEN-LAST:event_jBLogOutActionPerformed
+
+    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+        cargarImagenUsuario(user.getNick_usuario(), user.getImg_usuario());
+        jLNickUsuario.setText(user.getNick_usuario());
+        jLNombreApellido.repaint();
+        jLCorreo.repaint();                
+        jPList.repaint();
+        validate();
+    }//GEN-LAST:event_formFocusGained
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBPublicadas;
+    private javax.swing.JButton jBLogOut;
+    private javax.swing.JButton jBMisApps;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLCorreo;
     private javax.swing.JLabel jLNickUsuario;
     private javax.swing.JLabel jLNombreApellido;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPList;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTAplicaciones;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTBuscar;
+    private javax.swing.JToggleButton jTVistaApps;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton jbBuscar;
     private javax.swing.JLabel jlImagen;
     // End of variables declaration//GEN-END:variables
+
+    
 }

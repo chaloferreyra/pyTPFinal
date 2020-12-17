@@ -19,7 +19,5 @@ public class DaoFactory {
     public static CategoriasDao getCategoriaDao(){
         return new CategoriaDaoMySql();
     }  
-    public static ImagenDao getImagenDao(){
-        return new ImagenDaoMySql();
-    }
+
 }

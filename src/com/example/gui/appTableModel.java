@@ -7,9 +7,9 @@ package com.example.gui;
 
 import com.example.dominio.Aplicaciones;
 import com.example.servicios.GestorAplicaciones;
-import com.example.utils.Imagen;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -19,31 +19,21 @@ import javax.swing.table.AbstractTableModel;
 public class appTableModel extends AbstractTableModel {
 
     private GestorAplicaciones gestor = null;  // usar una generalizacion para todos los gestores.
-    private static final int COLS = 3;
-    private static final String COL_NAMES[] = {"Imagen", "Detalle", "Precio"};
+    private static final int COLS = 4;
+    private static final String COL_NAMES[] = {"ID", "NOMBRE", "DETALLE", "PRECIO"};
     private final int idUsuario;
-    private String buscar;
+    private final boolean propias;
+    
 
-    public appTableModel(GestorAplicaciones gestor, int idUsuario) {
+    public appTableModel(GestorAplicaciones gestor, int idUsuario, boolean propias) {
         this.gestor = gestor;
         this.idUsuario = idUsuario;
-        this.buscar = "";
+        this.propias = propias;
     }
-    
-    public appTableModel(GestorAplicaciones gestor, int idUsuario, String buscar) {
-        this.gestor = gestor;
-        this.idUsuario = idUsuario;
-        this.buscar = buscar;
-    }
-    
 
     @Override
     public int getRowCount() {
-        
-        if (buscar.equals(""))
-            return gestor.listApps(idUsuario).size();
-        else
-            return gestor.listAppsFiltro(idUsuario,buscar+"%").size();
+            return gestor.listApps(idUsuario,propias,false).size();
     }
 
     @Override
@@ -58,27 +48,25 @@ public class appTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        List<Aplicaciones> data = gestor.listApps(idUsuario);
-        StringBuilder detalleApp = new StringBuilder(); 
-        
+        List<Aplicaciones> data = gestor.listApps(idUsuario,propias,false);
+
         Object aux = null;
+
         if (data != null) {
             if (row < data.size()) {
                 Aplicaciones apps = data.get(row);
 
                 switch (col) {
                     case 0:
-                        aux = "";
+                        aux = apps.getApp_id();
                         break;
                     case 1:
-                        detalleApp.append(apps.getNombreApp());
-                        detalleApp.append("\n");
-                        detalleApp.append(apps.getDetalleApp());
-                        detalleApp.append("\n");
-                        detalleApp.append(apps.getFechaAltaApp());
-                        aux = detalleApp;
+                        aux = apps.getNombreApp();
                         break;
                     case 2:
+                        aux = apps.getDetalleApp();
+                        break;
+                    case 3:
                         aux = apps.getPrecioApp();
                         break;
 
@@ -95,4 +83,13 @@ public class appTableModel extends AbstractTableModel {
     public boolean isCellEditable(int i, int i1) {
         return false;
     }
+
+    class EscuchaApp implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+        }
+    }
+    
+    
 }

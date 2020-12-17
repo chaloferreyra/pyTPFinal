@@ -15,7 +15,10 @@ import java.util.List;
  */
 public interface AplicacionesDao {
     void create(Aplicaciones a)throws DaoExcepcion;
-    List<Aplicaciones> listoAplicaciones(int usuario) throws DaoExcepcion;
-    List<Aplicaciones> listoAppFiltro(int usuario, String buscar) throws DaoExcepcion;
-    List<Aplicaciones> listoAppUsuario(int usuario) throws DaoExcepcion;
+    List<Aplicaciones> listoAplicaciones(int usuario, boolean publicada, boolean propia) throws DaoExcepcion;
+    List<Aplicaciones> listoAppCompradas(int usuario) throws DaoExcepcion;
+    Aplicaciones buscarById(int idApp)throws DaoExcepcion;
+    boolean comprarApp(int idApp, int usuario_id)throws DaoExcepcion;
+    List<Aplicaciones> buscarByParam(int idUsuario, String cadena) throws DaoExcepcion;
+    void editApp(Aplicaciones a)throws DaoExcepcion;
 }

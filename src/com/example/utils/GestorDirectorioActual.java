@@ -36,6 +36,10 @@ public class GestorDirectorioActual {
         }
 
     }
+    
+    
+    
+    
     public static void checkDirectorioActual(String dir){
         Path actual = Paths.get(".");
         Path ws = Paths.get(dir);
@@ -52,6 +56,5 @@ public class GestorDirectorioActual {
                 System.err.println("Error. NO se pudo crear el espacio de trabajo para el usuario: " + dir);
             }
         }
-
     }
 }

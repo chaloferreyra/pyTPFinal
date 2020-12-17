@@ -6,6 +6,7 @@
 package com.example;
 
 import com.example.gui.JFlogin;
+import com.formdev.flatlaf.FlatDarkLaf;
 import javax.swing.UIManager;
 
 /**
@@ -18,7 +19,11 @@ public class ejecutable {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
- 
+        try {
+                UIManager.setLookAndFeel( new FlatDarkLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
         new JFlogin().setVisible(true);
         
     }
