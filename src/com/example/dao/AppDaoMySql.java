@@ -123,7 +123,7 @@ public class AppDaoMySql implements AplicacionesDao{
             Aplicaciones app = null;
             System.out.println("En nombre es:" + rs.getString(2));
             
-            return app = new Aplicaciones(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getDate(5), rs.getInt(6),rs.getInt(7),rs.getString(8));                  
+            return app = new Aplicaciones(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getDate(5), rs.getInt(6),rs.getInt(7),rs.getString(9));                  
             
             
         } catch (SQLException ex) {
@@ -175,7 +175,7 @@ public class AppDaoMySql implements AplicacionesDao{
             Aplicaciones apps = null;
             
             while (rs.next()) {
-                apps = new Aplicaciones(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getDate(5), rs.getInt(6),rs.getInt(7),rs.getString(8));                
+                apps = new Aplicaciones(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getDate(5), rs.getInt(6),rs.getInt(7),rs.getString(9));                
                 aux.add(apps);
             }
             
@@ -205,7 +205,7 @@ public class AppDaoMySql implements AplicacionesDao{
             Aplicaciones apps = null;
             
             while (rs.next()) {
-                apps = new Aplicaciones(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getDate(5), rs.getInt(6),rs.getInt(7),rs.getString(8));                
+                apps = new Aplicaciones(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getFloat(4), rs.getDate(5), rs.getInt(6),rs.getInt(7),rs.getString(9));                
                 aux.add(apps);
             }
             

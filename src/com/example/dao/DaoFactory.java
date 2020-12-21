@@ -18,6 +18,9 @@ public class DaoFactory {
     }
     public static CategoriasDao getCategoriaDao(){
         return new CategoriaDaoMySql();
-    }  
+    }
+    public static ValorarDao getValoracion(){
+        return new ValorarDaoMySql();
+    }
 
 }

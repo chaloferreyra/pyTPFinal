@@ -7,6 +7,7 @@ package com.example.gui;
 
 import com.example.dominio.Aplicaciones;
 import com.example.dominio.Usuario;
+import com.example.servicios.GestorValorar;
 import com.example.utils.Imagen;
 import java.awt.Cursor;
 import static java.awt.Frame.DEFAULT_CURSOR;
@@ -22,7 +23,9 @@ import java.nio.file.Paths;
  * @author Gonzalo
  */
 public class jPListado extends javax.swing.JPanel {
-   
+    Aplicaciones app;
+    Usuario user;
+    private GestorValorar gestor;
     
     
     /**
@@ -30,14 +33,28 @@ public class jPListado extends javax.swing.JPanel {
      * @param a
      * @param editar bandera, en true edita, en false compra
      * @param u
+     * @param mia
      */
-    public jPListado(Aplicaciones a, boolean editar, Usuario u) {
-        
+    public jPListado(Aplicaciones a, boolean editar, Usuario u, boolean mia) {
+
+        app = a;
+        user = u;
         initComponents();
+        gestor = new GestorValorar();
+        float calif = gestor.getValoracion(app.getApp_id());
+        
+        if(calif > 0){
+            jLValorC.setText(String.valueOf(calif));
+            jLEstrella.setVisible(true);
+        }else{
+            jLValorC.setText("--");
+            jLEstrella.setVisible(false);
+        }
+        
+        
         jpImagen.setSize(175, 180);
         Path pathImg = Paths.get("Aplicaciones/" + a.getNombreApp() + "/" + a.getImagen());
 
-//        System.out.println("Aplicaciones/" + a.getNombreApp() + "/" + a.getImagen());
         if (Files.exists(pathImg)) {
 
                 Imagen imagen = new Imagen(jpImagen.getHeight(),jpImagen.getWidth(),pathImg.toAbsolutePath().toString());
@@ -48,34 +65,60 @@ public class jPListado extends javax.swing.JPanel {
         jLNombre.setText(a.getNombreApp());
         
         
-        jLNombre.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent arg0) {
-                if (editar)
-                    new JDNvaApp(null, true, u, a).setVisible(true);
-                else    
-                    new JDComprarApp(null, true, a).setVisible(true);
-            }
+        if (mia){
+            jLCalificacion.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent arg) {
+                        new JDCalificar(null, true, a, u.getUsuario_id()).setVisible(true);   
+                }
 
-            @Override
-            public void mouseEntered(MouseEvent arg0) {
-                jLNombre.setCursor(new Cursor(HAND_CURSOR));
-            }
+                @Override
+                public void mouseEntered(MouseEvent arg) {
+                    jLNombre.setCursor(new Cursor(HAND_CURSOR));
+                }
 
-            @Override
-            public void mouseExited(MouseEvent arg0) {
-                jLNombre.setCursor(new Cursor(DEFAULT_CURSOR));
-            }
+                @Override
+                public void mouseExited(MouseEvent arg) {
+                    jLNombre.setCursor(new Cursor(DEFAULT_CURSOR));
+                }
 
-            @Override
-            public void mousePressed(MouseEvent arg0) {
-            }
+                @Override
+                public void mousePressed(MouseEvent arg) {
+                }
 
-            @Override
-            public void mouseReleased(MouseEvent arg0) {
-            }
-        });
-        
+                @Override
+                public void mouseReleased(MouseEvent arg) {
+                }
+            });
+        }else{
+            jLNombre.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent arg0) {
+                    if (editar)
+                        new JDNvaApp(null, true, u, a).setVisible(true);
+                    else    
+                        new JDComprarApp(null, true, a, user.getUsuario_id()).setVisible(true);
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent arg0) {
+                    jLNombre.setCursor(new Cursor(HAND_CURSOR));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent arg0) {
+                    jLNombre.setCursor(new Cursor(DEFAULT_CURSOR));
+                }
+
+                @Override
+                public void mousePressed(MouseEvent arg0) {
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent arg0) {
+                }
+            });
+        }
     }
 
     /**
@@ -90,6 +133,8 @@ public class jPListado extends javax.swing.JPanel {
         jLNombre = new javax.swing.JLabel();
         jLCalificacion = new javax.swing.JLabel();
         jpImagen = new javax.swing.JPanel();
+        jLValorC = new javax.swing.JLabel();
+        jLEstrella = new javax.swing.JLabel();
 
         jLNombre.setFont(new java.awt.Font("Berlin Sans FB Demi", 1, 14)); // NOI18N
         jLNombre.setText("NombreApp");
@@ -103,12 +148,19 @@ public class jPListado extends javax.swing.JPanel {
         jpImagen.setLayout(jpImagenLayout);
         jpImagenLayout.setHorizontalGroup(
             jpImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 167, Short.MAX_VALUE)
+            .addGap(0, 179, Short.MAX_VALUE)
         );
         jpImagenLayout.setVerticalGroup(
             jpImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 172, Short.MAX_VALUE)
         );
+
+        jLValorC.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLValorC.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLValorC.setText("1.0");
+
+        jLEstrella.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLEstrella.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/example/images/estrella.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -117,10 +169,15 @@ public class jPListado extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLCalificacion)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLCalificacion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLValorC, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLEstrella))
                     .addComponent(jLNombre)
-                    .addComponent(jpImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                    .addComponent(jpImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -130,15 +187,22 @@ public class jPListado extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLNombre)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLCalificacion)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLValorC)
+                    .addComponent(jLCalificacion, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(jLEstrella))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLCalificacion;
+    private javax.swing.JLabel jLEstrella;
     private javax.swing.JLabel jLNombre;
+    private javax.swing.JLabel jLValorC;
     private javax.swing.JPanel jpImagen;
     // End of variables declaration//GEN-END:variables
+
+
 }

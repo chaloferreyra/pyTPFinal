@@ -121,7 +121,6 @@
       <SubComponents>
         <Component class="javax.swing.JTextField" name="jTNombre">
           <Events>
-            <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTNombreFocusGained"/>
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTNombreFocusLost"/>
           </Events>
         </Component>

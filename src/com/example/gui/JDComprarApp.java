@@ -7,6 +7,7 @@ package com.example.gui;
 
 import com.example.dominio.Aplicaciones;
 import com.example.servicios.GestorAplicaciones;
+import com.example.servicios.GestorValorar;
 import java.awt.Image;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +22,8 @@ import javax.swing.JOptionPane;
 public class JDComprarApp extends javax.swing.JDialog {
        private final GestorAplicaciones gestor;
        private final Aplicaciones a;
+       private final GestorValorar gestorV;
+       private final int user;
        
     /**
      * Creates new form 
@@ -28,13 +31,15 @@ public class JDComprarApp extends javax.swing.JDialog {
      * @param modal
      * @param app
      */
-    public JDComprarApp(java.awt.Frame parent, boolean modal, Aplicaciones app) {
+    public JDComprarApp(java.awt.Frame parent, boolean modal, Aplicaciones app, int u) {
         super(parent, modal);
         a = app;
+        this.user = u;
         gestor = new GestorAplicaciones();
+        gestorV = new GestorValorar();
         initComponents();
         cargarInfoUsuario();
-
+        
     }
 
     
@@ -44,9 +49,19 @@ public class JDComprarApp extends javax.swing.JDialog {
         JTDetalle.setWrapStyleWord(true);
         jTOpinion.setLineWrap(true);
         jTOpinion.setWrapStyleWord(true);
+        
         jLNombre.setText(a.getNombreApp());
         JTDetalle.setText(a.getDetalleApp());
         jLPrecio.setText(String.valueOf(a.getPrecioApp()));
+        
+        float calif = gestorV.getValoracion(a.getApp_id());
+        if (calif > 0){
+            jLPromedio.setText(String.valueOf(calif));
+        }else{
+            jLPromedio.setText("--");
+        }
+        
+        jTOpinion.setText(gestorV.getOpinion(a.getApp_id()));
         
         Path pathImg = Paths.get("Aplicaciones/" + a.getNombreApp() + "/" + a.getImagen());
 
@@ -93,6 +108,7 @@ public class JDComprarApp extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         jLPromedio = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLEstrella = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -167,12 +183,16 @@ public class JDComprarApp extends javax.swing.JDialog {
         jTOpinion.setRows(5);
         jScrollPane2.setViewportView(jTOpinion);
 
-        jLabel5.setText("Opinión");
+        jLabel5.setText("Ultima Opinión");
 
         jLPromedio.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
+        jLPromedio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLPromedio.setText("4");
 
         jLabel4.setText("Calificacion");
+
+        jLEstrella.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLEstrella.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/example/images/estrella.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -182,26 +202,25 @@ public class JDComprarApp extends javax.swing.JDialog {
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(16, 16, 16)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addGap(26, 26, 26)
-                                        .addComponent(jLPromedio))
-                                    .addComponent(jLabel5))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLNombre)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLPromedio, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLEstrella))
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -228,10 +247,15 @@ public class JDComprarApp extends javax.swing.JDialog {
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLPromedio))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(31, 31, 31)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLPromedio)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(41, 41, 41)
+                                .addComponent(jLEstrella)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -243,8 +267,11 @@ public class JDComprarApp extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBComprarActionPerformed
+
+        System.out.println("Usuario que compra: " + user);
+        System.out.println("Aplicacion q compra: " + a.getApp_id());
         
-        if(gestor.comprarApps(a.getApp_id(), a.getIdUsuario()))
+        if(gestor.comprarApps(a.getApp_id(), user))
             JOptionPane.showMessageDialog(this, "La compra se realizo con éxito!", "Compra App", JOptionPane.INFORMATION_MESSAGE);
         
         this.dispose();
@@ -264,6 +291,7 @@ public class JDComprarApp extends javax.swing.JDialog {
     private javax.swing.ButtonGroup buttonGroup8;
     private javax.swing.ButtonGroup buttonGroup9;
     private javax.swing.JButton jBComprar;
+    private javax.swing.JLabel jLEstrella;
     private javax.swing.JLabel jLImagen;
     private javax.swing.JLabel jLNombre;
     private javax.swing.JLabel jLPrecio;

@@ -100,9 +100,6 @@ public class JDNvaApp extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jTNombre.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jTNombreFocusGained(evt);
-            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jTNombreFocusLost(evt);
             }
@@ -305,10 +302,6 @@ public class JDNvaApp extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_jBImagenActionPerformed
-
-    private void jTNombreFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTNombreFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTNombreFocusGained
     
     private void llenarCombo(){
         

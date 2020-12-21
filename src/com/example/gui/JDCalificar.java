@@ -5,18 +5,37 @@
  */
 package com.example.gui;
 
+import com.example.dominio.Aplicaciones;
+import com.example.dominio.Valoracion;
+import com.example.servicios.GestorValorar;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Gonzalo
  */
 public class JDCalificar extends javax.swing.JDialog {
-
+    private Aplicaciones app;
+    private int user;
+    private int estrella;
+    private GestorValorar gestor;
+    
     /**
      * Creates new form JDCalificar
+     * @param parent
+     * @param modal
+     * @param a
+     * @param user
      */
-    public JDCalificar(java.awt.Frame parent, boolean modal) {
+    public JDCalificar(java.awt.Frame parent, boolean modal, Aplicaciones a, int user) {
         super(parent, modal);
+        app = a;
+        this.user = user;
         initComponents();
+        jTAOpinion.setLineWrap(true);
+        jTAOpinion.setWrapStyleWord(true);
+        jLNomApp.setText(app.getNombreApp());
+        gestor = new GestorValorar();
     }
 
     /**
@@ -38,12 +57,13 @@ public class JDCalificar extends javax.swing.JDialog {
         jRB3 = new javax.swing.JRadioButton();
         jRB4 = new javax.swing.JRadioButton();
         jRB5 = new javax.swing.JRadioButton();
+        jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTOpinion1 = new javax.swing.JTextArea();
+        jLNomApp = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTAOpinion = new javax.swing.JTextArea();
 
         jTOpinion.setEditable(false);
         jTOpinion.setColumns(20);
@@ -54,9 +74,9 @@ public class JDCalificar extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Cantidad de Estrellas"));
 
-        jLabel3.setText("Valorar");
+        jLabel3.setText("Valora");
 
         jRB2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -88,14 +108,20 @@ public class JDCalificar extends javax.swing.JDialog {
             }
         });
 
+        jLabel4.setText("1      2      3      4      5");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(100, 100, 100)
+                .addComponent(jLabel4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addGap(27, 27, 27)
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
+                .addGap(27, 27, 27)
                 .addComponent(jRB1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jRB2)
@@ -109,30 +135,36 @@ public class JDCalificar extends javax.swing.JDialog {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(9, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRB2)
-                    .addComponent(jRB1)
-                    .addComponent(jRB4)
-                    .addComponent(jRB5)
-                    .addComponent(jRB3)
-                    .addComponent(jLabel3))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jRB2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRB1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRB4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRB5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRB3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel4)
                 .addContainerGap())
         );
 
         jLabel1.setText("Nombre Aplicación: ");
 
-        jLabel2.setText("NomApp");
-
-        jTOpinion1.setEditable(false);
-        jTOpinion1.setColumns(20);
-        jTOpinion1.setRows(5);
-        jScrollPane3.setViewportView(jTOpinion1);
+        jLNomApp.setText("NomApp");
 
         jLabel6.setText("Opinión");
 
         jButton1.setText("Calificar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jTAOpinion.setColumns(20);
+        jTAOpinion.setRows(5);
+        jScrollPane1.setViewportView(jTAOpinion);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -147,10 +179,10 @@ public class JDCalificar extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2))
+                        .addComponent(jLNomApp))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -159,16 +191,16 @@ public class JDCalificar extends javax.swing.JDialog {
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
+                    .addComponent(jLNomApp))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -180,6 +212,7 @@ public class JDCalificar extends javax.swing.JDialog {
         jRB3.setSelected(false);
         jRB2.setSelected(true);
         jRB1.setSelected(true);
+        estrella = 1;
     }//GEN-LAST:event_jRB2MouseReleased
 
     private void jRB1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRB1MouseReleased
@@ -188,6 +221,7 @@ public class JDCalificar extends javax.swing.JDialog {
         jRB3.setSelected(false);
         jRB2.setSelected(false);
         jRB1.setSelected(true);
+        estrella = 2;
     }//GEN-LAST:event_jRB1MouseReleased
 
     private void jRB3MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRB3MouseReleased
@@ -196,6 +230,7 @@ public class JDCalificar extends javax.swing.JDialog {
         jRB3.setSelected(true);
         jRB2.setSelected(true);
         jRB1.setSelected(true);
+        estrella = 3;
     }//GEN-LAST:event_jRB3MouseReleased
 
     private void jRB4MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRB4MouseReleased
@@ -204,6 +239,7 @@ public class JDCalificar extends javax.swing.JDialog {
         jRB3.setSelected(true);
         jRB2.setSelected(true);
         jRB1.setSelected(true);
+        estrella = 4;
     }//GEN-LAST:event_jRB4MouseReleased
 
     private void jRB5MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRB5MouseReleased
@@ -212,55 +248,23 @@ public class JDCalificar extends javax.swing.JDialog {
         jRB3.setSelected(true);
         jRB2.setSelected(true);
         jRB1.setSelected(true);
+        estrella = 5;
     }//GEN-LAST:event_jRB5MouseReleased
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JDCalificar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JDCalificar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JDCalificar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JDCalificar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Valoracion v = new Valoracion(estrella,jTAOpinion.getText(),app.getApp_id(),this.user);
+        gestor.crearValoracion(v);
+        JOptionPane.showMessageDialog(this, "Gracias por Calificar la App", "Calificacion", JOptionPane.INFORMATION_MESSAGE);
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                JDCalificar dialog = new JDCalificar(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLNomApp;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
@@ -269,9 +273,9 @@ public class JDCalificar extends javax.swing.JDialog {
     private javax.swing.JRadioButton jRB3;
     private javax.swing.JRadioButton jRB4;
     private javax.swing.JRadioButton jRB5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTAOpinion;
     private javax.swing.JTextArea jTOpinion;
-    private javax.swing.JTextArea jTOpinion1;
     // End of variables declaration//GEN-END:variables
 }

@@ -45,7 +45,7 @@ public class JFAppStore extends javax.swing.JFrame {
 
         initComponents();
         gestorApp = new GestorAplicaciones();
-        setExtendedState(this.MAXIMIZED_BOTH);
+//        setExtendedState(this.MAXIMIZED_BOTH);
         setTitle("Tienda de Aplicaciones");
         this.setLocationRelativeTo(null);
 
@@ -81,7 +81,7 @@ public class JFAppStore extends javax.swing.JFrame {
         
         listApp = gestorApp.listApps(user.getUsuario_id(), true, true);
 
-        cargarPanelApp(listApp,false);
+        cargarPanelApp(listApp,false,false);
 
         if (user.getIdTipo() == 1) { //el tipo uno es consumidor
             jTVistaApps.setVisible(false);
@@ -103,27 +103,27 @@ public class JFAppStore extends javax.swing.JFrame {
         }
     }
     
-    private void cargarPanelApp(List<Aplicaciones> listApp, boolean editar) {
+    private boolean cargarPanelApp(List<Aplicaciones> listApp, boolean editar, boolean mia) {
         
         if (listApp.isEmpty()){
             System.out.println("No hay nada en la lista");
             JOptionPane.showMessageDialog(this, "No hay nada para mostrar, lo siento!", "Lista Vacia", JOptionPane.INFORMATION_MESSAGE);
+            return false;
         }else{
             jPList.removeAll();
+            GridLayout miGridLayout = new GridLayout(0,5);
+            jPList.setLayout(miGridLayout);
+
+            for (int i = 0; i < listApp.size(); i++) {
+                    jPList.add(new jPListado(listApp.get(i), editar, user, mia));
+
+            }
             jPList.validate();
             jPList.repaint();
+            return true;
         }
         
-        GridLayout miGridLayout = new GridLayout(0,5);
-        jPList.setLayout(miGridLayout);
         
-        for (int i = 0; i < listApp.size(); i++) {
-            Aplicaciones apps = listApp.get(i);
-                jPList.add(new jPListado(apps, editar, user));
-                
-        }
-        jPList.validate();
-        jPList.repaint();
     }
 
     /**
@@ -151,6 +151,7 @@ public class JFAppStore extends javax.swing.JFrame {
         jLCorreo = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jBLogOut = new javax.swing.JButton();
+        jLTitulo = new javax.swing.JLabel();
 
         jTextField1.setText("jTextField1");
 
@@ -162,6 +163,8 @@ public class JFAppStore extends javax.swing.JFrame {
                 formFocusGained(evt);
             }
         });
+
+        jPanel2.setBackground(new java.awt.Color(0, 51, 102));
 
         jbBuscar.setText("Buscar...");
         jbBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -176,11 +179,6 @@ public class JFAppStore extends javax.swing.JFrame {
         jTVistaApps.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jTVistaAppsStateChanged(evt);
-            }
-        });
-        jTVistaApps.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTVistaAppsActionPerformed(evt);
             }
         });
 
@@ -211,14 +209,14 @@ public class JFAppStore extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                .addGap(14, 14, 14)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jbBuscar)
                     .addComponent(jLabel2)
                     .addComponent(jTVistaApps)
                     .addComponent(jBMisApps))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jPList.setBackground(new java.awt.Color(102, 102, 102));
@@ -227,7 +225,7 @@ public class JFAppStore extends javax.swing.JFrame {
         jPList.setLayout(jPListLayout);
         jPListLayout.setHorizontalGroup(
             jPListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 964, Short.MAX_VALUE)
+            .addGap(0, 1020, Short.MAX_VALUE)
         );
         jPListLayout.setVerticalGroup(
             jPListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,6 +296,12 @@ public class JFAppStore extends javax.swing.JFrame {
                 .addGap(132, 132, 132))
         );
 
+        jLTitulo.setBackground(new java.awt.Color(0, 51, 102));
+        jLTitulo.setFont(new java.awt.Font("Dialog", 1, 36)); // NOI18N
+        jLTitulo.setForeground(new java.awt.Color(255, 255, 255));
+        jLTitulo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLTitulo.setText("Para Comprar");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -305,13 +309,16 @@ public class JFAppStore extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jScrollPane2)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGap(24, 24, 24)
+                                .addComponent(jLTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 1018, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1036, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -321,9 +328,11 @@ public class JFAppStore extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                .addGap(22, 22, 22))
         );
 
         pack();
@@ -335,30 +344,27 @@ public class JFAppStore extends javax.swing.JFrame {
 
     private void jbBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBuscarActionPerformed
         listApp = gestorApp.listAppsByparam(user.getUsuario_id(), jTBuscar.getText());
-        cargarPanelApp(listApp, false);
+        cargarPanelApp(listApp, false, false);
     }//GEN-LAST:event_jbBuscarActionPerformed
 
     private void jBMisAppsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBMisAppsActionPerformed
         listApp = gestorApp.listAppsC(user.getUsuario_id());
-        cargarPanelApp(listApp, true);
+        if(cargarPanelApp(listApp, true, true))
+            jLTitulo.setText("Aplicaciones adquiridas");
     }//GEN-LAST:event_jBMisAppsActionPerformed
-
-    private void jTVistaAppsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTVistaAppsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTVistaAppsActionPerformed
 
     private void jTVistaAppsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTVistaAppsStateChanged
         
         if(jTVistaApps.isSelected()){
             jTVistaApps.setText("Comprar App");
             listApp = gestorApp.listApps(user.getUsuario_id(), false, true);
-            cargarPanelApp(listApp, true);
-            
+            if(cargarPanelApp(listApp, true, false))
+                jLTitulo.setText("Mis Publicaciones");
         }else{
             jTVistaApps.setText("Mis Publicadas");
             listApp = gestorApp.listApps(user.getUsuario_id(), true, true);
-            cargarPanelApp(listApp, false);
-            
+            if(cargarPanelApp(listApp, false, false))
+                jLTitulo.setText("Para Comprar");
         }
 
    
@@ -386,6 +392,7 @@ public class JFAppStore extends javax.swing.JFrame {
     private javax.swing.JLabel jLCorreo;
     private javax.swing.JLabel jLNickUsuario;
     private javax.swing.JLabel jLNombreApellido;
+    private javax.swing.JLabel jLTitulo;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPList;
     private javax.swing.JPanel jPanel1;
